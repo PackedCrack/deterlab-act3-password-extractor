@@ -5,36 +5,6 @@
 #pragma once
 
 
-#ifdef _MSC_VER
-    #if _MSC_VER < 1929
-		#define FMT fmt::format
-        #define USING_FMT
-	#else
-		#define FMT std::format
-	#endif
-#elif __GNUC__
-    #if __GNUC__ < 13
-        #define FMT fmt::format
-        #define USING_FMT
-    #else
-		#define FMT std::format
-    #endif
-#elif __clang__
-    #if __clang_major__ < 17
-        #define FMT fmt::format
-        #define USING_FMT
-    #else
-		#define FMT std::format
-	#endif
-#endif
-
-#ifdef USING_FMT
-    #define FMT_HEADER_ONLY
-    #include "fmt/core.h"
-    #undef USING_FMT	// dont leak define
-#endif
-
-
 namespace logger
 {
     static constexpr std::string_view COLOR_CLR = "\033[0m";
@@ -56,22 +26,22 @@ namespace logger
     template<typename string_t>
     void log_warn(std::string_view file, std::string_view function, int32_t line, string_t&& msg)
     {
-        log_msg(COLOR_YELLOW, "WARNING", FMT(FORMATTED_MSG.data(), file, function, line, std::forward<string_t>(msg)));
+        log_msg(COLOR_YELLOW, "WARNING", std::format(FORMATTED_MSG.data(), file, function, line, std::forward<string_t>(msg)));
     };
     template<typename string_t>
     void log_err(std::string_view file, std::string_view function, int32_t line, string_t&& msg)
     {
-        log_msg(COLOR_RED, "ERROR", FMT(FORMATTED_MSG.data(), file, function, line, std::forward<string_t>(msg)));
+        log_msg(COLOR_RED, "ERROR", std::format(FORMATTED_MSG.data(), file, function, line, std::forward<string_t>(msg)));
     };
     template<typename string_t>
     void log_fat(std::string_view file, std::string_view function, int32_t line, string_t&& msg)
     {
-        log_msg(COLOR_RED, "UNRECOVERABLE ERROR", FMT(FORMATTED_MSG.data(), file, function, line, std::forward<string_t>(msg)));
+        log_msg(COLOR_RED, "UNRECOVERABLE ERROR", std::format(FORMATTED_MSG.data(), file, function, line, std::forward<string_t>(msg)));
         throw std::runtime_error(std::string{"Fatal runtime error. See log. Aborting.."});
     };
     template<typename string_t>
     void log_ass(std::string_view file, std::string_view function, int32_t line, string_t&& msg)
     {
-        log_msg(COLOR_RED, "ASSERTION FAILURE", FMT(FORMATTED_MSG.data(), file, function, line, std::forward<string_t>(msg)));
+        log_msg(COLOR_RED, "ASSERTION FAILURE", std::format(FORMATTED_MSG.data(), file, function, line, std::forward<string_t>(msg)));
     };
 }
