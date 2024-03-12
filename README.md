@@ -12,9 +12,12 @@ Built and tested with __GCC 13.2__.
 
 # Build
 ### Pre steps
-* /cppcheck.sh must be executable -> sudo chmod +x cppcheck.sh
-* Install cppcheck -> sudo apt install cppcheck
-* Install cmake -> sudo apt install cmake
+* /cppcheck.sh must be executable
+  * sudo chmod +x cppcheck.sh
+* Install cppcheck
+  * sudo apt install cppcheck
+* Install cmake
+  * sudo apt install cmake
 
 ## Building with Ninja
 * sudo apt install ninja-build
