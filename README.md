@@ -1,7 +1,7 @@
 
 
 # Deterlab act 3 password extractor
-This will extract the 8 "hidden" passwords for the Deterlab digital forensics lab act 3. Found here https://www.isi.deterlab.net/file.php?file=/share/shared/Computerforensics/index.html#act3. The three encrypted files are provided for convenience (which are found in the lab .iso file at /home/Rich/swiss_keys), but you have to bring your own version of the .iso file for act3.
+This will extract the 8 "hidden" passwords for the Deterlab digital forensics lab act 3. Found here https://www.isi.deterlab.net/file.php?file=/share/shared/Computerforensics/index.html#act3. The three encrypted files are provided for convenience (which are found in the labs .iso file at /home/Rich/swiss_keys). The act3 .iso file is NOT provided (its likely copyrighted) so you have bring your own.
 
 
 
@@ -12,9 +12,12 @@ Built and tested with __GCC 13.2__.
 
 # Build
 ### Pre steps
-* /cppcheck.sh must be executable -> sudo chmod +x cppcheck.sh
-* Install cppcheck -> sudo apt install cppcheck
-* Install cmake -> sudo apt install cmake
+* /cppcheck.sh must be executable
+  * sudo chmod +x cppcheck.sh
+* Install cppcheck
+  * sudo apt install cppcheck
+* Install cmake
+  * sudo apt install cmake
 
 ## Building with Ninja
 * sudo apt install ninja-build
