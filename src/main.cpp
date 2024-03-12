@@ -13,7 +13,7 @@
 #pragma GCC diagnostic pop
 
 
-//#define PROFILER_ENABLED
+#define NO_PROFILE 1
 
 [[nodiscard]] tf::Executor& executor_instance()
 {
@@ -21,21 +21,19 @@
     return exec;
 }
 
-// Turn binary file into ascii
+
 namespace
 {
 [[nodiscard]] bool ascii_byte(int32_t byte)
 {
     return (byte < 127 && byte > 31) || (byte == 10);
 }
-
 [[nodiscard]] char as_ascii(int32_t data)
 {
     ASSERT(ascii_byte(static_cast<uint8_t>(data)), "Parameter is not an no 'normal' ascii value!");
     
     return static_cast<char>(data);
 }
-
 [[nodiscard]] std::fstream open_file(const std::filesystem::path& filepath, std::ios_base::openmode mode)
 {
     std::fstream file{ filepath, mode };
@@ -46,7 +44,6 @@ namespace
     
     return file;
 }
-
 [[nodiscard]] std::string extract_ascii(const std::filesystem::path& filepath)
 {
     LOG_INFO("Extracting file data...");
@@ -71,18 +68,13 @@ namespace
     
     return output;
 }
-}   // namespace
-
-// Find all potential passwords using regex
-namespace
-{
-std::mutex storageLock;
 void store_password(std::unordered_set<std::string>& set, std::string_view password)
 {
+    static std::mutex storageLock{};
+    
     std::lock_guard<std::mutex> lock{ storageLock };
     [[maybe_unused]] auto[iter, emplaced] = set.emplace(password);
 }
-
 void regex_search(std::unordered_set<std::string>& potentialPasswords, const std::string& source, const std::regex& pattern)
 {
     std::sregex_iterator begin{ source.begin(), source.end(), pattern };
@@ -93,7 +85,6 @@ void regex_search(std::unordered_set<std::string>& potentialPasswords, const std
         store_password(potentialPasswords, iter->str());
     }
 }
-
 [[nodiscard]] std::vector<std::regex> build_patterns()
 {
     std::vector<std::regex> output{};
@@ -104,7 +95,6 @@ void regex_search(std::unordered_set<std::string>& potentialPasswords, const std
     
     return output;
 }
-
 [[nodiscard]] std::unordered_set<std::string> find_potential_passwords(const std::string& source)
 {
     LOG_INFO("Looking for passwords with regex..");
@@ -127,11 +117,6 @@ void regex_search(std::unordered_set<std::string>& potentialPasswords, const std
     
     return potentialPasswords;
 }
-}   // namespace
-
-// Try each password against the eight encrypted files
-namespace
-{
 [[nodiscard]] std::vector<std::string> find_working_passwords(
         const std::filesystem::path& dataDirPath,
         const std::unordered_set<std::string>& potentialPasswords)
@@ -152,13 +137,13 @@ namespace
         {
             for(size_t i = 0u; i < NUM_ENCRYPTED_FILES; ++i)
             {
-                if(!workingPasswords[i].first.load(std::memory_order_relaxed))
+                if(!workingPasswords[i].first.load())
                 {
                     size_t keyNumber = i + 1u;
                     CPasswordTester tester{ dataDirPath, keyNumber, password };
                     if(tester.success())
                     {
-                        workingPasswords[i].first.store(true, std::memory_order_relaxed);
+                        workingPasswords[i].first.store(true);
                         workingPasswords[i].second = password;
                         break;
                     }
@@ -183,7 +168,7 @@ namespace
 }   // namespace
 
 
-#ifndef PROFILER_ENABLED
+#if NO_PROFILE
 int main(int argc, char** argv)
 {
     try
@@ -196,7 +181,7 @@ int main(int argc, char** argv)
         std::filesystem::path dataDirPath{ argv[1] };
         
         // Turn binary file into ascii
-        std::string fileContent = extract_ascii(dataDirPath / "act3-cpy.img");
+        std::string fileContent = extract_ascii(dataDirPath / "act3.img");
         
         // Find all potential passwords using regex
         std::unordered_set<std::string> potentialPasswords = find_potential_passwords(fileContent);
@@ -204,18 +189,22 @@ int main(int argc, char** argv)
         // Try each password against the eight encrypted files
         std::vector<std::string> passwords = find_working_passwords(dataDirPath, potentialPasswords);
         
+        
         // Print keys..
+        std::string keys{};
         for(size_t i = 0u; i < passwords.size(); ++i)
         {
-            LOG_INFO_FMT("Key {}: {}", i + 1u, passwords[i]);
-        }
+            keys += std::format("Key {}: {}\n", i + 1u, passwords[i]);
+                    }
+        LOG_INFO_FMT("{}", keys);
+        
+        return EXIT_SUCCESS;
     }
     catch (const std::runtime_error& err)
     {
         LOG_ERROR_FMT("Exception message: {}", err.what());
+        return EXIT_FAILURE;
     }
-    
-    return 0;
 }
 #else
 int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
@@ -237,7 +226,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
             std::string fileContent{};
             double extractTime = profiler::benchmark([&]()
             {
-                fileContent = extract_ascii(dataDirPath / "act3-cpy.img");
+                fileContent = extract_ascii(dataDirPath / "act3.img");
             });
             profileData.emplace_back("Extract Ascii Time", extractTime);
             
@@ -269,12 +258,13 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
         {
             LOG_INFO_FMT("{}: {} ms", timeData.first, timeData.second);
         };
+        
+        return EXIT_SUCCESS;
     }
     catch (const std::runtime_error& err)
     {
         LOG_ERROR_FMT("Exception message: {}", err.what());
+        return EXIT_FAILURE;
     }
-
-    return 0;
 }
 #endif

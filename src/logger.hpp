@@ -4,8 +4,6 @@
 
 #pragma once
 
-//#include "exceptions.hpp"
-
 
 #ifdef _MSC_VER
     #if _MSC_VER < 1929
