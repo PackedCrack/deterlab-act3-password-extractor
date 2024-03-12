@@ -20,7 +20,7 @@ set_target_properties(${MAIN_PROJECT} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${OUT
 set_target_properties(${MAIN_PROJECT} PROPERTIES CXX_STANDARD 23)
 set_target_properties(${MAIN_PROJECT} PROPERTIES CXX_STANDARD_REQUIRED ON)
 set_target_properties(${MAIN_PROJECT} PROPERTIES FOLDER ${FOLDER_MAIN})
-#add_dependencies(${MAIN_PROJECT} cppcheck)
+add_dependencies(${MAIN_PROJECT} cppcheck)
 #include
 target_include_directories(${MAIN_PROJECT} PRIVATE "${PROJECT_SOURCE_DIR}/external")
 # compiler settings etc

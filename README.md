@@ -1,4 +1,10 @@
-https://www.isi.deterlab.net/file.php?file=/share/shared/Computerforensics/index.html#act3
+
+
+# Deterlab act 3 password extractor
+This will extract the 8 "hidden" passwords for the Deterlab digital forensics lab act 3. Found here https://www.isi.deterlab.net/file.php?file=/share/shared/Computerforensics/index.html#act3. The three encrypted files are provided for convenience (which are found in the lab .iso file at /home/Rich/swiss_keys), but you have to bring your own version of the .iso file for act3.
+
+
+
 
 
 ## Compiler Support
@@ -32,16 +38,19 @@ Cppcheck can be removed as a custom build target in case it causes troubles (cpp
 * Remove line 29 - "add_dependencies(${MAIN_PROJECT} cppcheck)"
 
 
-## Running
+## Run
 * cd root/cmake-build-\<_configuration_>/bin/
 * ./MAIN \<args...>
 
 ### Arguments
 * *&lt;filepath-to-data-folder*&gt;
 
-#### Data folder layout
+### Example
+./MAIN /home/user/data
+
+### Data folder layout
 data\
-├── act3-cpy.img\
+├── act3.img\
 ├── swiss_keys\
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── swisskey1.gpg\
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── swisskey2.gpg\
@@ -51,3 +60,35 @@ data\
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── swisskey6.gpg\
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── swisskey7.gpg\
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── swisskey8.gpg\
+
+
+#### Output
+INFO
+
+Extracting file data...
+
+INFO
+
+Looking for passwords with regex..
+
+INFO
+
+Testing passwords...
+
+INFO
+
+Key 1: 23philo7dendron88
+
+Key 2: 41jade6tree29
+
+Key 3: 29azalea8flower00
+
+Key 4: 11hibiscus2hibiscus23
+
+Key 5: 19rose42blossom35
+
+Key 6: 13tulip34root28
+
+Key 7: 17jonquil23scent14
+
+Key 8: 26daisy99daisy99

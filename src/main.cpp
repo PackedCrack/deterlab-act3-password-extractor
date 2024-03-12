@@ -195,7 +195,7 @@ int main(int argc, char** argv)
         for(size_t i = 0u; i < passwords.size(); ++i)
         {
             keys += std::format("Key {}: {}\n", i + 1u, passwords[i]);
-                    }
+        }
         LOG_INFO_FMT("{}", keys);
         
         return EXIT_SUCCESS;
